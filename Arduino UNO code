@@ -1,0 +1,40 @@
+const int chargeLed = 9;        // Charging indicator LED
+const int dischargeLed = 10;    // Discharging indicator LED
+
+const int gridRequestBtn = 2;   // Simulate grid requesting power
+const int batteryLowBtn = 3;    // Simulate EV battery low
+
+void setup() {
+  pinMode(chargeLed, OUTPUT);
+  pinMode(dischargeLed, OUTPUT);
+  pinMode(gridRequestBtn, INPUT_PULLUP);
+  pinMode(batteryLowBtn, INPUT_PULLUP);
+
+  Serial.begin(9600);
+}
+
+void loop() {
+  bool gridNeedsPower = digitalRead(gridRequestBtn) == LOW;
+  bool evBatteryLow = digitalRead(batteryLowBtn) == LOW;
+
+  if (evBatteryLow) {
+    // Charge the EV
+    digitalWrite(chargeLed, HIGH);
+    digitalWrite(dischargeLed, LOW);
+    Serial.println("Mode: Charging EV from Grid");
+  } 
+  else if (gridNeedsPower) {
+    // Discharge from EV to Grid
+    digitalWrite(chargeLed, LOW);
+    digitalWrite(dischargeLed, HIGH);
+    Serial.println("Mode: Discharging EV to Grid");
+  } 
+  else {
+    // Idle mode
+    digitalWrite(chargeLed, LOW);
+    digitalWrite(dischargeLed, LOW);
+    Serial.println("Mode: Idle");
+  }
+
+  delay(500);
+}
